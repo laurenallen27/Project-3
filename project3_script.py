@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import fft
 import project3_module as p3m
+from scipy import signal
 
 #%% Part 1: Collect and Load Data
 # Call the load data function for each activity
@@ -62,47 +63,61 @@ plt.xlabel("Time (s)")
 
 #%% Part 2: Filter Your Data
 # Create filter to get rid of low frequency drift and high frequency fuzz
+# Filter applied to each activity type
+rest_data_filtered = p3m.filter_butter(rest_data_file)
+relaxing_data_filtered = p3m.filter_butter(relaxing_data_file)
+stress_rest_data_filtered = p3m.filter_butter(stress_rest_data_file)
+physical_data_filtered = p3m.filter_butter(physical_data_file)
 
 #Plot filter's impulse response and frequency response
 
-#plot impulse response
-
 fs = 500
-t = np.arange(0, len(rest_data_file), 1/fs)
-unit_step = np.zeros(len(t))
-unit_step[t>=0]=1
+dt = 1/fs
+#create time array
+t = np.arange(0, (len(rest_data_file))/fs , dt)
+#create unit impulse
+unit_impulse = signal.unit_impulse(len(t))
+#get impulse response by sending unit impulse through filter
+impulse_response = p3m.filter_butter(unit_impulse)
 
-impulse_response = p3m.filter_butter(unit_step)
-
+#plot impulse response
 plt.figure(3, clear = True)
 plt.subplot(1, 2, 1)
-plt.plot(impulse_response)
+plt.plot(t, impulse_response)
+plt.title('Impulse Response')
+plt.xlabel('Time (s)')
+plt.ylabel('Amplitude?')
 
 #plot frequency response
-
+# use fft to put impulse response in frequency domain
 frequency_butter_filter = fft.rfft(impulse_response)
+# get frequency values on x axis
+f = fft.rfftfreq(len(impulse_response), dt)
 
+#plot frequency response
 plt.subplot(1, 2, 2)
-plt.plot(frequency_butter_filter)
+plt.plot(f, frequency_butter_filter)
+plt.title('Frequency Response')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('X(f)')
 
 
-# Plot data from one activity before and after filter is applied
+# Plot data from rest activity before and after filter is applied
 
 #plot before filter
 plt.figure(4, clear = True)
 plt.subplot(1, 2, 1)
 plt.plot(rest_data_file)
-plt.title("Rest heart rate")
+plt.title("Rest Heart Rate")
 plt.ylabel("Voltage (mV)")
-plt.xlabel("Frequency")
+plt.xlabel("Time (s)")
 
 #plot after filter
-
-rest_data_filter =  p3m.filter_butter(rest_data_file)
-
 plt.subplot(1, 2, 2)
-plt.plot(rest_data_filter)
-
+plt.plot(rest_data_filtered)
+plt.title('Rest Heart Rate Filtered')
+plt.ylabel("Voltage (mV)")
+plt.xlabel("Time (s)")
 
 
 #%% Part 3: Detect Heartbeats

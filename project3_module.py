@@ -24,33 +24,27 @@ def load_data(input_file):
     
 
 #%% Part 2: Filter Your Data
-# Create a function to apply to filter to each dataset
-
-#fs=0.8
-#def filter_butter(signal, passband, stopband, fs=fs):
-    
-    #order, wn = scipy.signal.buttord(passband, stopband, 4, 40)
-    #sos = scipy.signal.butter(5, fs, btype = 'bandpass')
-    #butter_filter = sos.filtfilt
-    
-    #return butter_filter
-
-
+# Create a function to apply bandpass butterworth filter to each dataset
 def filter_butter(signal):
-    low = 1
-    high = 1.7
+    # define lowcut freq, highcut freq, and sampling freq
+    lowcut = 1 
+    highcut = 1.7
     fs = 500
     
+    # get values for frequency band
     nyq = fs * 2
-    low = low / nyq
-    high = high / nyq
+    low = lowcut / nyq
+    high = highcut / nyq
     
+    #set order
     order = 2
     
+    #get coefficients
     b, a = scipy.signal.butter(order, (low,high), 'bandpass', analog=False)
     y = scipy.signal.filtfilt(b, a, signal, axis=0)
-    
+    #return filtered signal
     return y
+
 #%% Part 3: Detect Heartbeats
 # Create function to detect heartbeats in each dataset
 
