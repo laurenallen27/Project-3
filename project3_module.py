@@ -12,6 +12,8 @@ Project 3: Module
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import fft
+import scipy 
+from scipy.signal import filtfilt
 
 #%% Part 1: Collect and Load Data
 # Create function to load data for 4 different activity categories
@@ -24,6 +26,31 @@ def load_data(input_file):
 #%% Part 2: Filter Your Data
 # Create a function to apply to filter to each dataset
 
+#fs=0.8
+#def filter_butter(signal, passband, stopband, fs=fs):
+    
+    #order, wn = scipy.signal.buttord(passband, stopband, 4, 40)
+    #sos = scipy.signal.butter(5, fs, btype = 'bandpass')
+    #butter_filter = sos.filtfilt
+    
+    #return butter_filter
+
+
+def filter_butter(signal):
+    low = 1
+    high = 1.7
+    fs = 500
+    
+    nyq = fs * 2
+    low = low / nyq
+    high = high / nyq
+    
+    order = 2
+    
+    b, a = scipy.signal.butter(order, (low,high), 'bandpass', analog=False)
+    y = scipy.signal.filtfilt(b, a, signal, axis=0)
+    
+    return y
 #%% Part 3: Detect Heartbeats
 # Create function to detect heartbeats in each dataset
 
