@@ -180,7 +180,7 @@ plt.tight_layout(pad = 3)
 #%% Part 4: Calculate Heart Rate Variability
 # Plot HRV measure for each activity in a bar graph (activity on x axis, HRV on y axis)
 
-# Calculate an interpolated timecourse of IBIat regular intervalsof dt=0.1 seconds
+# Calculate an interpolated timecourse of IBI at regular intervals of dt=0.1 seconds
 
 #%% Part 5: Get HRV Frequency Band Power
 # Plot frequency domain magnitude in power
