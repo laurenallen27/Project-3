@@ -47,6 +47,12 @@ def filter_butter(signal):
 
 #%% Part 3: Detect Heartbeats
 # Create function to detect heartbeats in each dataset
+def detect_beats(signal, threshold):
+    potential_beat = np.where(signal >= threshold)[0]
+    #Get indicies of every first value above the threshold
+    beat_locations = potential_beat[np.insert(np.diff(potential_beat) > 1, 0, True)] #Insert a 0 at the start because frist value in potential beat is a beat
+    
+    return beat_locations
 
 #%% Part 4: Calculate Heart Rate Variability
 # Create function to calculate the inter-beat intervals from detected heartbeats

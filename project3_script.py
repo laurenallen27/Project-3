@@ -123,6 +123,60 @@ plt.xlabel("Time (s)")
 #%% Part 3: Detect Heartbeats
 # Plot data for each activity's detected heartbeat times
 
+# detect heart beats for rest activity
+rest_heartbeat = p3m.detect_beats(rest_data_filtered, 1) #threshold = 1
+# get times of heart beats
+t_rest_heartbeat = np.arange(len(rest_data_filtered))
+# plot rest data with heartbeat times
+plt.figure('Heart Rate Data with Heartbeat Times', clear = True)
+plt.subplot(2,2,1)
+plt.plot(rest_data_filtered)
+plt.scatter(t_rest_heartbeat[rest_heartbeat], rest_data_filtered[rest_heartbeat], c='green')
+plt.title('Restful Activity Filtered\n w/ Heartbeat Times')
+plt.ylabel("Voltage (mV)")
+plt.xlabel("Time (s)")
+plt.tight_layout(pad = 3)
+
+#detect heart beats for relaxing activity
+relaxing_heartbeat = p3m.detect_beats(relaxing_data_filtered, 1) #threshold = 1
+#get times of heartbeats
+t_relaxing_heartbeat = np.arange(len(relaxing_data_filtered))
+#plot relaxing data with heartbeat times
+plt.subplot(2,2,2)
+plt.plot(relaxing_data_filtered)
+plt.scatter(t_relaxing_heartbeat[relaxing_heartbeat], relaxing_data_filtered[relaxing_heartbeat], c='green')
+plt.title('Relaxing Heart Rate\n Filtered w/ Heartbeat Times')
+plt.ylabel("Voltage (mV)")
+plt.xlabel("Time (s)")
+plt.tight_layout(pad = 3)
+
+#detect heart beats for stressful rest activity
+stress_rest_heartbeat = p3m.detect_beats(stress_rest_data_filtered, 1) #threshold = 1
+#get times of heartbeats
+t_stress_rest_heartbeat = np.arange(len(stress_rest_data_filtered))
+#plot relaxing data with heartbeat times
+plt.subplot(2,2,3)
+plt.plot(stress_rest_data_filtered)
+plt.scatter(t_stress_rest_heartbeat[stress_rest_heartbeat], stress_rest_data_filtered[stress_rest_heartbeat], c='green')
+plt.title('Mental Stress Heart Rate\n Filtered w/ Heartbeat Times')
+plt.ylabel("Voltage (mV)")
+plt.xlabel("Time (s)")
+plt.tight_layout(pad = 3)
+
+# detect heart beats for physical activity
+physical_heartbeat = p3m.detect_beats(physical_data_filtered, 1) #threshold = 1
+# get times of heart beats
+t_physical_heartbeat = np.arange(len(physical_data_filtered))
+# plot rest data with heartbeat times
+plt.subplot(2,2,4)
+plt.plot(physical_data_filtered)
+plt.scatter(t_physical_heartbeat[physical_heartbeat], physical_data_filtered[physical_heartbeat], c='green')
+plt.title('Physical Activity Heart Rate\n Filtered w/ Heartbeat Times')
+plt.ylabel("Voltage (mV)")
+plt.xlabel("Time (s)")
+plt.tight_layout(pad = 3)
+
+
 #%% Part 4: Calculate Heart Rate Variability
 # Plot HRV measure for each activity in a bar graph (activity on x axis, HRV on y axis)
 
