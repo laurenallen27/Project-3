@@ -19,6 +19,7 @@ from scipy.signal import filtfilt
 # Create function to load data for 4 different activity categories
 def load_data(input_file):
     data_file = np.loadtxt(input_file, dtype = float)
+    #data_file = data_file * (5/1024)
     
     return data_file
     
@@ -27,8 +28,8 @@ def load_data(input_file):
 # Create a function to apply bandpass butterworth filter to each dataset
 def filter_butter(signal):
     # define lowcut freq, highcut freq, and sampling freq
-    lowcut = 1 
-    highcut = 1.7
+    lowcut = .7
+    highcut = 2
     fs = 500
     
     # get values for frequency band
@@ -56,8 +57,22 @@ def detect_beats(signal, threshold):
 
 #%% Part 4: Calculate Heart Rate Variability
 # Create function to calculate the inter-beat intervals from detected heartbeats
-
+def calculate_ibi(signal_heartbeat):
+    for index in signal_heartbeat:
+        ibi_values = np.zeros(len(signal_heartbeat) - 1)
+        ibi_values = np.diff(signal_heartbeat, axis=0)
+        #ibi_times = np.zeros(len(signal_heartbeat) -1)
+        #ibi_times = signal_heartbeat[ibi_values]
+        
+    return ibi_values
 # Create function to calculate one HRV measure for each activity
+def calculate_hrv(ibi_values):
+    hrv = np.std(ibi_values)
+    
+    return(hrv)
+
+#interpolate IBI at dt=0.1
+
 
 #%% Part 5: Get HRV Frequency Band Power
 # Create function to calculate the frequency domain magnitude of each activity’s IBI timecourse signal
