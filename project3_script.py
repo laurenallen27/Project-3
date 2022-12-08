@@ -17,40 +17,54 @@ from scipy import signal
 
 #%% Part 1: Collect and Load Data
 # Call the load data function for each activity
-rest_data_file = p3m.load_data('rest_data (1).txt')
-relaxing_data_file = p3m.load_data('on_phone_data (1).txt')
-stress_rest_data_file = p3m.load_data('stressful_rest (1).txt')
-physical_data_file = p3m.load_data('wallsit_data (1).txt')
+duration = 300 #seconds data counted for
+fs = 500
+dt = 1/fs
 
+rest_data_file = p3m.load_data('rest_data (1).txt', duration, fs)
+relaxing_data_file = p3m.load_data('on_phone_data (1).txt', duration, fs)
+stress_rest_data_file = p3m.load_data('stressful_rest (1).txt', duration, fs)
+physical_data_file = p3m.load_data('wallsit_data (1).txt', duration, fs)
+
+#get time arrays for plots
+t = np.arange(0, (len(rest_data_file))/fs , dt)
 
 # Plot of 5 minutes sitting at rest
 plt.figure(1, clear = True)
 plt.subplot(2,2,1)
-plt.plot(rest_data_file)
+plt.plot(t, rest_data_file)
 plt.title("Rest heart rate")
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
+plt.xlim(0,5)
+plt.tight_layout(pad = 3)
 
 # Plot of 5 minutes of relaxing activity
 plt.subplot(2,2,2)
-plt.plot(relaxing_data_file)
+plt.plot(t,relaxing_data_file)
 plt.title("Relaxing heart rate")
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
+plt.xlim(9,14)
+plt.tight_layout(pad = 3)
 
 # Plot of 5 minutes of mentally stressful activity
 plt.subplot(2,2,3)
-plt.plot(stress_rest_data_file)
+plt.plot(t,stress_rest_data_file)
 plt.title("Mental srtess heart rate")
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
+plt.xlim(0,5)
+plt.tight_layout(pad = 3)
 
 # Plot of 5 minutes of physically stressful activity
 plt.subplot(2,2,4)
-plt.plot(physical_data_file)
+plt.plot(t,physical_data_file)
 plt.title("Physical stress heart rate")
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
+plt.xlim(47,52)
+plt.tight_layout(pad = 3)
 
 # Plot of 4 activity recordings concatenated together
 # concatenate 4 signals
@@ -59,7 +73,8 @@ plt.figure(2, clear = True)
 plt.plot(concatenated_data)  
 plt.title("Concatenated signal") 
 plt.ylabel("Voltage (mV)")
-plt.xlabel("Time (s)")                      
+plt.xlabel("Time (s)")       
+plt.tight_layout(pad = 3)               
 
 #%% Part 2: Filter Your Data
 # Create filter to get rid of low frequency drift and high frequency fuzz
@@ -83,10 +98,11 @@ impulse_response = p3m.filter_butter(unit_impulse)
 #plot impulse response
 plt.figure(3, clear = True)
 plt.subplot(1, 2, 1)
-plt.plot(t, impulse_response)
+plt.plot(impulse_response)
 plt.title('Impulse Response')
 plt.xlabel('Time (s)')
 plt.ylabel('Amplitude?')
+
 
 #plot frequency response
 # use fft to put impulse response in frequency domain
@@ -107,35 +123,38 @@ plt.ylabel('X(f)')
 #plot before filter
 plt.figure(4, clear = True)
 plt.subplot(1, 2, 1)
-plt.plot(rest_data_file)
+plt.plot(t, rest_data_file)
 plt.title("Rest Heart Rate")
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
+plt.xlim(0,5)
 
 #plot after filter
 plt.subplot(1, 2, 2)
-plt.plot(rest_data_filtered)
+plt.plot(t,rest_data_filtered)
 plt.title('Rest Heart Rate Filtered')
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
+plt.xlim(0,5)
 
 
 #%% Part 3: Detect Heartbeats
 # Plot data for each activity's detected heartbeat times
 
 # detect heart beats for rest activity
-rest_heartbeat = p3m.detect_beats(rest_data_filtered, 1) #threshold = 1
+rest_heartbeat = p3m.detect_beats(rest_data_filtered, 40) #threshold = 40
 # get times of heart beats
 t_rest_heartbeat = np.arange(len(rest_data_filtered))
 # plot rest data with heartbeat times
 plt.figure('Heart Rate Data with Heartbeat Times', clear = True)
 plt.subplot(2,2,1)
-plt.plot(rest_data_filtered)
+plt.plot(t,rest_data_filtered)
 plt.scatter(t_rest_heartbeat[rest_heartbeat], rest_data_filtered[rest_heartbeat], c='green')
 plt.title('Restful Activity Filtered\n w/ Heartbeat Times')
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
 plt.tight_layout(pad = 3)
+plt.xlim(0,5)
 
 #detect heart beats for relaxing activity
 relaxing_heartbeat = p3m.detect_beats(relaxing_data_filtered, 1) #threshold = 1
@@ -143,12 +162,13 @@ relaxing_heartbeat = p3m.detect_beats(relaxing_data_filtered, 1) #threshold = 1
 t_relaxing_heartbeat = np.arange(len(relaxing_data_filtered))
 #plot relaxing data with heartbeat times
 plt.subplot(2,2,2)
-plt.plot(relaxing_data_filtered)
+plt.plot(t,relaxing_data_filtered)
 plt.scatter(t_relaxing_heartbeat[relaxing_heartbeat], relaxing_data_filtered[relaxing_heartbeat], c='green')
 plt.title('Relaxing Heart Rate\n Filtered w/ Heartbeat Times')
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
 plt.tight_layout(pad = 3)
+plt.xlim(9,14)
 
 #detect heart beats for stressful rest activity
 stress_rest_heartbeat = p3m.detect_beats(stress_rest_data_filtered, 1) #threshold = 1
@@ -156,12 +176,13 @@ stress_rest_heartbeat = p3m.detect_beats(stress_rest_data_filtered, 1) #threshol
 t_stress_rest_heartbeat = np.arange(len(stress_rest_data_filtered))
 #plot relaxing data with heartbeat times
 plt.subplot(2,2,3)
-plt.plot(stress_rest_data_filtered)
+plt.plot(t,stress_rest_data_filtered)
 plt.scatter(t_stress_rest_heartbeat[stress_rest_heartbeat], stress_rest_data_filtered[stress_rest_heartbeat], c='green')
 plt.title('Mental Stress Heart Rate\n Filtered w/ Heartbeat Times')
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
 plt.tight_layout(pad = 3)
+plt.xlim(0,5)
 
 # detect heart beats for physical activity
 physical_heartbeat = p3m.detect_beats(physical_data_filtered, 1) #threshold = 1
@@ -169,12 +190,13 @@ physical_heartbeat = p3m.detect_beats(physical_data_filtered, 1) #threshold = 1
 t_physical_heartbeat = np.arange(len(physical_data_filtered))
 # plot rest data with heartbeat times
 plt.subplot(2,2,4)
-plt.plot(physical_data_filtered)
+plt.plot(t,physical_data_filtered)
 plt.scatter(t_physical_heartbeat[physical_heartbeat], physical_data_filtered[physical_heartbeat], c='green')
 plt.title('Physical Activity Heart Rate\n Filtered w/ Heartbeat Times')
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
 plt.tight_layout(pad = 3)
+plt.xlim(47,52)
 
 
 #%% Part 4: Calculate Heart Rate Variability

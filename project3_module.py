@@ -17,23 +17,23 @@ from scipy.signal import filtfilt
 
 #%% Part 1: Collect and Load Data
 # Create function to load data for 4 different activity categories
-def load_data(input_file):
+def load_data(input_file, duration, fs):
     data_file = np.loadtxt(input_file, dtype = float)
-    #data_file = data_file * (5/1024)
+    #data_file = data_file * 5/1024
+    data_file = data_file[0:duration*fs]
     
     return data_file
     
-
 #%% Part 2: Filter Your Data
 # Create a function to apply bandpass butterworth filter to each dataset
 def filter_butter(signal):
     # define lowcut freq, highcut freq, and sampling freq
-    lowcut = .7
-    highcut = 2
+    lowcut = 0.5 
+    highcut = 2.5 #150bpm in bps
     fs = 500
     
-    # get values for frequency band
-    nyq = fs * 2
+    #get values for frequency band
+    nyq = fs * 0.5
     low = lowcut / nyq
     high = highcut / nyq
     
@@ -43,9 +43,10 @@ def filter_butter(signal):
     #get coefficients
     b, a = scipy.signal.butter(order, (low,high), 'bandpass', analog=False)
     y = scipy.signal.filtfilt(b, a, signal, axis=0)
-    #return filtered signal
+    # return filtered signal
     return y
-
+    
+    
 #%% Part 3: Detect Heartbeats
 # Create function to detect heartbeats in each dataset
 def detect_beats(signal, threshold):
