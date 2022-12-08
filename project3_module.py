@@ -28,7 +28,7 @@ def load_data(input_file, duration, fs):
 # Create a function to apply bandpass butterworth filter to each dataset
 def filter_butter(signal):
     # define lowcut freq, highcut freq, and sampling freq
-    lowcut = 0.5 
+    lowcut = 0.5 #30bpm in bps
     highcut = 2.5 #150bpm in bps
     fs = 500
     
@@ -73,6 +73,11 @@ def calculate_hrv(ibi_values):
     return(hrv)
 
 #interpolate IBI at dt=0.1
+def interpolate_data(beat_time, ibi_values, dt=0.1):
+    interpolated_time = np.arange(0,np.max(beat_time),dt)
+    interpolated_data = np.interp(interpolated_time, beat_time, ibi_values)
+    
+    return interpolated_time, interpolated_data
 
 
 #%% Part 5: Get HRV Frequency Band Power
