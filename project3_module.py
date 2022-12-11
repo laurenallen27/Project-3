@@ -74,6 +74,7 @@ def calculate_hrv(ibi_values):
 
 #interpolate IBI at dt=0.1
 def interpolate_data(beat_time, ibi_values, dt=0.1):
+    beat_time = beat_time[0:-1]
     interpolated_time = np.arange(0,np.max(beat_time),dt)
     interpolated_data = np.interp(interpolated_time, beat_time, ibi_values)
     
@@ -82,6 +83,34 @@ def interpolate_data(beat_time, ibi_values, dt=0.1):
 
 #%% Part 5: Get HRV Frequency Band Power
 # Create function to calculate the frequency domain magnitude of each activity’s IBI timecourse signal
+def frequency_filter(ibi_values, dt = 0.1):
+    
+    frequency_fft = fft.rfft(ibi_values - np.mean(ibi_values))
+    power = np.square(np.abs(frequency_fft))
+    frequency = fft.rfftfreq(len(ibi_values), dt)
 
+    
+    low_freq_index = np.zeros(len(frequency))
+    low_freq_index[(frequency >= 0.04) & (frequency <= .15)] = 1
+    low_freq_index = low_freq_index.astype(int)
+    low_freq = frequency[low_freq_index]
+    low_power_index = power * low_freq_index
+    print(low_power_index)
+    low_power = low_power_index[low_power_index >0]
+   
+    high_freq_index = np.zeros(len(frequency))
+    high_freq_index[(frequency >= .15) & (frequency <= 0.4)] = 1
+    high_freq_index = high_freq_index.astype(int)
+    high_freq = frequency[high_freq_index]
+    high_power_index = power * high_freq_index
+    high_power = high_power_index[high_power_index >0]
+    
+    
+    return frequency, power, low_freq, low_power, high_freq, high_power
+    
+    
+    
+    
+    return frequency, power, low_freq, low_power, high_freq, high_power
 #Create function to extract the mean power in the LF and HF frequency bands & calculate the LF/HF ratio for each
 
