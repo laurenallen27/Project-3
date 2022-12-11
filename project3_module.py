@@ -88,12 +88,16 @@ def frequency_filter(ibi_values, dt = 0.1):
     frequency_fft = fft.rfft(ibi_values - np.mean(ibi_values))
     power = np.square(np.abs(frequency_fft))
     frequency = fft.rfftfreq(len(ibi_values), dt)
+    print(frequency)
 
     
     low_freq_index = np.zeros(len(frequency))
     low_freq_index[(frequency >= 0.04) & (frequency <= .15)] = 1
     low_freq_index = low_freq_index.astype(int)
+    print(low_freq_index)
     low_freq = frequency[low_freq_index]
+    print(low_freq)
+    print(low_freq_index)
     low_power_index = power * low_freq_index
     print(low_power_index)
     low_power = low_power_index[low_power_index >0]

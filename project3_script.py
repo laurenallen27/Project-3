@@ -112,7 +112,7 @@ plt.subplot(1, 2, 1)
 plt.plot(impulse_response)
 plt.title('Impulse Response')
 plt.xlabel('Time (s)')
-plt.ylabel('Amplitude?')
+plt.ylabel('Amplitude (A.U.')
 plt.xscale('log')
 plt.grid()
 plt.tight_layout()
@@ -129,7 +129,7 @@ plt.subplot(1, 2, 2)
 plt.plot(f, frequency_butter_filter)
 plt.title('Frequency Response')
 plt.xlabel('Frequency (Hz)')
-plt.ylabel('X(f)')
+plt.ylabel('Amplitude (A.U)')
 plt.xscale('log')
 plt.grid()
 plt.tight_layout()
@@ -312,7 +312,7 @@ plt.tight_layout()
 # Plot frequency domain magnitude in power
 
 #FFT of IBI timecourse
-rest_frequency, rest_power, rest_low_frequency, rest_low_power, rest_high_frequency, rest_high_power = p3m.frequency_filter(relaxing_time_interpolated, dt)
+rest_frequency, rest_power, rest_low_frequency, rest_low_power, rest_high_frequency, rest_high_power = p3m.frequency_filter(relaxing_ibi, dt)
 #rest_frequency_time = ((rest_frequency_time)**2)/10
 
 plt.figure(8, clear = True)
