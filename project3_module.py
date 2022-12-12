@@ -18,6 +18,25 @@ from scipy.signal import filtfilt
 #%% Part 1: Collect and Load Data
 # Create function to load data for 4 different activity categories
 def load_data(input_file, duration, fs):
+    '''
+    A function to load the data file and clip it so that for a given duration &
+   sampling frequency, each data file contains the same number of samples. 
+
+    Parameters
+    ----------
+    input_file : string
+        Name of the txt file to be loaded
+    duration : integer
+        The time in seconds that the data should be collected for
+    fs : integer
+        The sampling frequency in Hz or 1/s
+
+    Returns
+    -------
+    data_file : array of size (x,) where x is the number of samples
+        1D array containing the ecg voltage data at a given sampling frequency
+
+    '''
     data_file = np.loadtxt(input_file, dtype = float)
     #data_file = data_file * 5/1024
     data_file = data_file[0:duration*fs]
@@ -27,6 +46,21 @@ def load_data(input_file, duration, fs):
 #%% Part 2: Filter Your Data
 # Create a function to apply bandpass butterworth filter to each dataset
 def filter_butter(signal):
+    '''
+    A function to create a bandpass filter which removes noise and artifacts from
+    a given signal. 
+
+    Parameters
+    ----------
+    signal : array of size (x,) where x is the number of samples
+        1D array containing the ecg voltage data at a given sampling frequency
+
+    Returns
+    -------
+    filtered_signal : array of size (x,) where x is the number of samples
+        1D array containing the filtered ECG data 
+
+    '''
     # define lowcut freq, highcut freq, and sampling freq
     lowcut = 0.5 #30bpm in bps
     highcut = 2.5 #150bpm in bps
@@ -42,14 +76,34 @@ def filter_butter(signal):
     
     #get coefficients
     b, a = scipy.signal.butter(order, (low,high), 'bandpass', analog=False)
-    y = scipy.signal.filtfilt(b, a, signal, axis=0)
+    filtered_signal = scipy.signal.filtfilt(b, a, signal, axis=0)
     # return filtered signal
-    return y
+    return filtered_signal
     
     
 #%% Part 3: Detect Heartbeats
 # Create function to detect heartbeats in each dataset
 def detect_beats(signal, threshold, fs):
+    '''
+    
+
+    Parameters
+    ----------
+    signal : TYPE
+        DESCRIPTION.
+    threshold : TYPE
+        DESCRIPTION.
+    fs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    beat_locations : TYPE
+        DESCRIPTION.
+    beat_time : TYPE
+        DESCRIPTION.
+
+    '''
     potential_beat = np.where(signal >= threshold)[0] 
     #Get indicies of every first value above the threshold
     beat_locations = potential_beat[np.insert(np.diff(potential_beat) > 1, 0, True)] #Insert a 0 at the start because frist value in potential beat is a beat
