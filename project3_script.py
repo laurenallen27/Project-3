@@ -161,63 +161,33 @@ plt.grid()
 # Plot data for each activity's detected heartbeat times
 
 # detect heart beats for rest activity
-rest_heartbeat = p3m.detect_beats(rest_data_filtered, 40) #threshold = 40
-# get times of heart beats
-t_rest_heartbeat = np.arange(len(rest_data_filtered))/fs
+
 # plot rest data with heartbeat times
 plt.figure('Heart Rate Data with Heartbeat Times', clear = True)
 plt.subplot(4,1,1)
-plt.plot(t,rest_data_filtered)
-plt.scatter(t_rest_heartbeat[rest_heartbeat], rest_data_filtered[rest_heartbeat], c='green')
+rest_heartbeat, rest_heartbeat_time = p3m.detect_beats(rest_data_filtered, 40, fs) #threshold = 40
 plt.title('Restful Activity Filtered\n w/ Heartbeat Times')
-plt.ylabel("Voltage (mV)")
-plt.xlabel("Time (s)")
-plt.tight_layout(pad = 3)
 plt.xlim(0,5)
 plt.grid()
 
 #detect heart beats for relaxing activity
-relaxing_heartbeat = p3m.detect_beats(relaxing_data_filtered, 1) #threshold = 1
-#get times of heartbeats
-t_relaxing_heartbeat = np.arange(len(relaxing_data_filtered))/fs
-#plot relaxing data with heartbeat times
 plt.subplot(4,1,2)
-plt.plot(t,relaxing_data_filtered)
-plt.scatter(t_relaxing_heartbeat[relaxing_heartbeat], relaxing_data_filtered[relaxing_heartbeat], c='green')
-plt.title('Relaxing Heart Rate\n Filtered w/ Heartbeat Times')
-plt.ylabel("Voltage (mV)")
-plt.xlabel("Time (s)")
-plt.tight_layout(pad = 3)
+relaxing_heartbeat, relaxing_heartbeat_time = p3m.detect_beats(relaxing_data_filtered, 40, fs) #threshold = 40
+plt.title('Relaxing Activity Filtered\n w/ Heartbeat Times')
 plt.xlim(9,14)
 plt.grid()
 
 #detect heart beats for stressful rest activity
-stress_rest_heartbeat = p3m.detect_beats(stress_rest_data_filtered, 1) #threshold = 1
-#get times of heartbeats
-t_stress_rest_heartbeat = np.arange(len(stress_rest_data_filtered))/fs
-#plot relaxing data with heartbeat times
 plt.subplot(4,1,3)
-plt.plot(t,stress_rest_data_filtered)
-plt.scatter(t_stress_rest_heartbeat[stress_rest_heartbeat], stress_rest_data_filtered[stress_rest_heartbeat], c='green')
-plt.title('Mental Stress Heart Rate\n Filtered w/ Heartbeat Times')
-plt.ylabel("Voltage (mV)")
-plt.xlabel("Time (s)")
-plt.tight_layout(pad = 3)
+stress_rest_heartbeat, stress_rest_heartbeat_time = p3m.detect_beats(stress_rest_data_filtered, 40, fs) #threshold = 40
+plt.title('Mentally Stressful Activity Filtered\n w/ Heartbeat Times')
 plt.xlim(0,5)
 plt.grid()
 
 # detect heart beats for physical activity
-physical_heartbeat = p3m.detect_beats(physical_data_filtered, 1) #threshold = 1
-# get times of heart beats
-t_physical_heartbeat = np.arange(len(physical_data_filtered))/fs
-# plot rest data with heartbeat times
 plt.subplot(4,1,4)
-plt.plot(t,physical_data_filtered)
-plt.scatter(t_physical_heartbeat[physical_heartbeat], physical_data_filtered[physical_heartbeat], c='green')
-plt.title('Physical Activity Heart Rate\n Filtered w/ Heartbeat Times')
-plt.ylabel("Voltage (mV)")
-plt.xlabel("Time (s)")
-plt.tight_layout(pad = 3)
+physical_heartbeat, physical_heartbeat_time = p3m.detect_beats(physical_data_filtered, 40, fs) #threshold = 40
+plt.title('Physical Activity Filtered\n w/ Heartbeat Times')
 plt.xlim(47,52)
 plt.grid()
 
@@ -227,10 +197,10 @@ plt.grid()
 # call IBI values for all data
 
 #calculate times
-rest_heartbeat_time = t_rest_heartbeat[rest_heartbeat]
-relaxing_heartbeat_time = t_relaxing_heartbeat[relaxing_heartbeat]
-stress_rest_heartbeat_time = t_stress_rest_heartbeat[stress_rest_heartbeat]
-physical_heartbeat_time = t_physical_heartbeat[physical_heartbeat]
+#rest_heartbeat_time = t_rest_heartbeat[rest_heartbeat]
+#relaxing_heartbeat_time = t_relaxing_heartbeat[relaxing_heartbeat]
+#stress_rest_heartbeat_time = t_stress_rest_heartbeat[stress_rest_heartbeat]
+#physical_heartbeat_time = t_physical_heartbeat[physical_heartbeat]
 
 rest_ibi = p3m.calculate_ibi(rest_heartbeat_time)
 relaxing_ibi = p3m.calculate_ibi(relaxing_heartbeat_time)
@@ -268,10 +238,10 @@ plt.tight_layout()
 #can subtract the mean of the signal before taking the transform, or can take plot and zoom in on y axis to see fluctuations
 #freq response has y range determined by fs, nyquist frequency is 1/2 of sampling frequency, determined by interpolated signal freq
 
-rest_data_interpolated, rest_time_interpolated = p3m.interpolate_data(rest_heartbeat_time, rest_ibi, dt=0.1)
-relaxing_data_interpolated, relaxing_time_interpolated = p3m.interpolate_data(relaxing_heartbeat_time, relaxing_ibi, dt=0.1)
-stress_rest_data_interpolated, stress_rest_time_interpolated = p3m.interpolate_data(stress_rest_heartbeat_time, stress_rest_ibi, dt=0.1)
-physical_data_interpolated, physical_time_interpolated = p3m.interpolate_data(physical_heartbeat_time, physical_ibi, dt=0.1)
+#rest_data_interpolated, rest_time_interpolated = p3m.interpolate_data(rest_heartbeat_time, rest_ibi, dt=0.1)
+#relaxing_data_interpolated, relaxing_time_interpolated = p3m.interpolate_data(relaxing_heartbeat_time, relaxing_ibi, dt=0.1)
+#stress_rest_data_interpolated, stress_rest_time_interpolated = p3m.interpolate_data(stress_rest_heartbeat_time, stress_rest_ibi, dt=0.1)
+#physical_data_interpolated, physical_time_interpolated = p3m.interpolate_data(physical_heartbeat_time, physical_ibi, dt=0.1)
 
 #Graph them wooohooo
 
@@ -309,10 +279,15 @@ plt.ylabel('Interpolated IBI (...)')
 plt.grid()
 plt.tight_layout()
 #%% Part 5: Get HRV Frequency Band Power
+#call interpolate data function
+
+interpolated_rest, rest_hrv = p3m.calculate_ibis(rest_heartbeat)
+
+
 # Plot frequency domain magnitude in power
 
 #FFT of IBI timecourse
-rest_frequency, rest_power, rest_low_frequency, rest_low_power, rest_high_frequency, rest_high_power = p3m.frequency_filter(relaxing_ibi, dt)
+rest_frequency, rest_power, rest_low_frequency, rest_low_power, rest_high_frequency, rest_high_power = p3m.frequency_filter(interpolated_rest, dt)
 #rest_frequency_time = ((rest_frequency_time)**2)/10
 
 plt.figure(8, clear = True)
@@ -320,8 +295,8 @@ plt.figure(8, clear = True)
 plt.subplot(3,1,1)
 plt.plot(rest_frequency, rest_power)
 plt.subplot(3,1,2)
-plt.plot(rest_low_frequency, rest_low_power, color='y')
+plt.plot(rest_low_frequency, rest_low_power, alpha = 0.7, color='y')
 plt.subplot(3,1,3)
-plt.plot(rest_high_frequency, rest_high_power, color='g')
+plt.plot(rest_high_frequency, rest_high_power, alpha = 0.7, color='g')
 
 # Plot ratios of LF/HF in a bar graph
