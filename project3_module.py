@@ -85,23 +85,25 @@ def filter_butter(signal):
 # Create function to detect heartbeats in each dataset
 def detect_beats(signal, threshold, fs):
     '''
-    
+    A function to detect when beats occur in a signal by determining if the
+    signal value passes a certain threshold. 
 
     Parameters
     ----------
-    signal : TYPE
-        DESCRIPTION.
-    threshold : TYPE
-        DESCRIPTION.
-    fs : TYPE
-        DESCRIPTION.
+    signal : Array of integers.
+        An array .
+    threshold : Integer.
+        Specified value to identify the QRS wave complex.
+    fs : integer
+        The sampling frequency in Hz or 1/s
 
     Returns
     -------
-    beat_locations : TYPE
-        DESCRIPTION.
-    beat_time : TYPE
-        DESCRIPTION.
+    beat_locations : Array of Integers
+        Representing the values of the signal that exceed the specified signal, 
+        marking the location of the QRS wave in the sample signal .
+    beat_time : Array of Integers
+        Representing the times at which the beat exceeded the specified threshold.
 
     '''
     potential_beat = np.where(signal >= threshold)[0] 
@@ -124,6 +126,26 @@ def detect_beats(signal, threshold, fs):
 #%% Part 4: Calculate Heart Rate Variability
 # Create function to calculate the inter-beat intervals from detected heartbeats
 def calculate_ibis(beat_locations, beat_time):
+    '''
+    
+
+    Parameters
+    ----------
+    beat_locations : Array of Integers
+        Representing the values of the signal that exceed the specified signal, 
+        marking the location of the QRS wave in the sample signal .
+    beat_time : Array of Integers
+        Representing the times at which the beat exceeded the specified threshold.
+
+    Returns
+    -------
+    interpolated_ibi : Array of Floats
+        A collection of the interpolated inter beat intervals for the identified beats.
+    hrv : Array of Floats
+        A value representing the standard deviation of the inter beat interval
+        of the specified signal.
+
+    '''
     dt = 0.1
     fs = 10
     interpolated_time = np.arange(0, beat_locations.max(), dt)
@@ -138,6 +160,32 @@ def calculate_ibis(beat_locations, beat_time):
 #%% Part 5: Get HRV Frequency Band Power
 # Create function to calculate the frequency domain magnitude of each activity’s IBI timecourse signal
 def frequency_filter(ibi_values, dt = 0.1):
+    '''
+    
+
+    Parameters
+    ----------
+    ibi_values : Array of 
+        DESCRIPTION.
+    dt : TYPE, optional
+        DESCRIPTION. The default is 0.1.
+
+    Returns
+    -------
+    frequency : TYPE
+        DESCRIPTION.
+    power : TYPE
+        DESCRIPTION.
+    low_freq : TYPE
+        DESCRIPTION.
+    low_power : TYPE
+        DESCRIPTION.
+    high_freq : TYPE
+        DESCRIPTION.
+    high_power : TYPE
+        DESCRIPTION.
+
+    '''
     
     frequency_fft = fft.rfft(ibi_values - np.mean(ibi_values))
     power = np.square(np.abs(frequency_fft))
@@ -169,6 +217,22 @@ def frequency_filter(ibi_values, dt = 0.1):
     
 #Create function to extract the mean power in the LF and HF frequency bands & calculate the LF/HF ratio for each
 def extract_mean_power(low_power, high_power):
+    '''
+    
+
+    Parameters
+    ----------
+    low_power : TYPE
+        DESCRIPTION.
+    high_power : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    ratio : TYPE
+        DESCRIPTION.
+
+    '''
     mean_lf = np.mean(low_power)
     mean_hf = np.mean(high_power)
     

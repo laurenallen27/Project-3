@@ -73,6 +73,7 @@ plt.xlabel("Time (s)")
 plt.xlim(47,52)
 plt.grid()
 plt.tight_layout()
+plt.savefig('Unfiltered heart beat')
 
 # Plot of 4 activity recordings concatenated together
 # concatenate 4 signals
@@ -83,7 +84,8 @@ plt.title("Concatenated signal")
 plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")      
 plt.grid()
-plt.tight_layout(pad = 3)               
+plt.tight_layout(pad = 3)           
+plt.savefig('Concatenated signal')    
 
 #%% Part 2: Filter Your Data
 
@@ -112,7 +114,7 @@ plt.subplot(1, 2, 1)
 plt.plot(impulse_response)
 plt.title('Impulse Response')
 plt.xlabel('Time (s)')
-plt.ylabel('Amplitude (A.U.')
+plt.ylabel('H(t)')
 plt.xscale('log')
 plt.grid()
 plt.tight_layout()
@@ -129,10 +131,11 @@ plt.subplot(1, 2, 2)
 plt.plot(f, frequency_butter_filter)
 plt.title('Frequency Response')
 plt.xlabel('Frequency (Hz)')
-plt.ylabel('Amplitude (A.U)')
+plt.ylabel('Magnitude (A.U)')
 plt.xscale('log')
 plt.grid()
 plt.tight_layout()
+plt.savefig('Filter')
 
 
 # Plot data from rest activity before and after filter is applied
@@ -155,6 +158,8 @@ plt.ylabel("Voltage (mV)")
 plt.xlabel("Time (s)")
 plt.xlim(0,5)
 plt.grid()
+plt.tight_layout()
+plt.savefig('Rest Heart Rate Filtered')
 
 
 #%% Part 3: Detect Heartbeats
@@ -190,6 +195,7 @@ physical_heartbeat, physical_heartbeat_time = p3m.detect_beats(physical_data_fil
 plt.title('Physical Activity Filtered\n w/ Heartbeat Times')
 plt.xlim(47,52)
 plt.grid()
+plt.savefig('Filtered Heart Beats')
 
 
 #%% Part 4: Calculate Heart Rate Variability
@@ -206,6 +212,8 @@ y = np.array([rest_hrv, relaxing_hrv, stress_rest_hrv, physical_hrv])
 plt.figure(6, clear = True)
 plt.bar(x,y)
 plt.ylabel('HRV')
+plt.title('Heart Rate Variability for Various Activities')
+plt.savefig('HRV Bar Graph')
 
 
 # Calculate an interpolated timecourse of IBI at regular intervals of dt=0.1 seconds
@@ -224,17 +232,34 @@ plt.figure(8, clear = True)
 plt.subplot(4,1,1)
 rest_frequency, rest_power, rest_low_frequency, rest_low_power, rest_high_frequency, rest_high_power = p3m.frequency_filter(interpolated_rest, dt)
 plt.ylim(0,0.25*(10**9))
+plt.title('FFT Spectrum - Rest')
+plt.ylabel('Power (s^2/Hz)')
+plt.xlabel('Frequency(Hz)')
+plt.tight_layout()
 
 plt.subplot(4,1,2)
 relaxing_frequency, relaxing_power, relaxing_low_frequency, relaxing_low_power, relaxing_high_frequency, relaxing_high_power = p3m.frequency_filter(interpolated_relaxing, dt)
+plt.title('FFT Spectrum - Relax')
+plt.ylabel('Power (s^2/Hz)')
+plt.xlabel('Frequency(Hz)')
+plt.tight_layout()
 
 plt.subplot(4,1,3)
 stress_rest_frequency, stress_rest_power, stress_rest_low_frequency, stress_rest_low_power, stress_rest_high_frequency, stress_rest_high_power = p3m.frequency_filter(interpolated_stress_rest, dt)
 plt.ylim(0,0.25*(10**8))
+plt.title('FFT Spectrum - Stress Rest')
+plt.ylabel('Power (s^2/Hz)')
+plt.xlabel('Frequency(Hz)')
+plt.tight_layout()
 
 plt.subplot(4,1,4)
 physical_frequency, physical_power, physical_low_frequency, physical_low_power, physical_high_frequency, physical_high_power = p3m.frequency_filter(interpolated_physical, dt)
 plt.ylim(0,1*(10**9))
+plt.title('FFT Spectrum - Physical Stress')
+plt.ylabel('Power (s^2/Hz)')
+plt.xlabel('Frequency(Hz)')
+plt.tight_layout()
+plt.savefig('FFT Spectrum')
 
 # Plot ratios of LF/HF in a bar graph
 rest_ratio = p3m.extract_mean_power(rest_low_power, rest_high_power)
@@ -248,5 +273,7 @@ y = np.array([rest_ratio, relaxing_ratio, stress_rest_ratio, physical_ratio])
 plt.figure(9, clear = True)
 plt.bar(x,y)
 plt.ylabel('HRV Ratio')
+plt.title('LF/HF Ratio for various activities')
+plt.savefig('HRV Ratio Bar Graph')
 
 
