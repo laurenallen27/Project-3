@@ -69,40 +69,17 @@ def detect_beats(signal, threshold, fs):
 
 #%% Part 4: Calculate Heart Rate Variability
 # Create function to calculate the inter-beat intervals from detected heartbeats
-def calculate_ibis(beat_locations):
-    dt = .01
+def calculate_ibis(beat_locations, beat_time):
+    dt = 0.1
     fs = 10
-    interpolated_time = np.arange(0, (beat_locations.max()), dt)
-    ibi_values = np.diff(beat_locations, axis = 0)
-    beat_times = beat_locations[0:-1] /fs
+    interpolated_time = np.arange(0, beat_locations.max(), dt)
+    ibi_values = np.diff(beat_time, axis = 0)
+    beat_times = beat_locations[1:] / fs
     interpolated_ibi = np.interp(interpolated_time, beat_times, ibi_values)
     hrv = np.std(interpolated_ibi)
     
     return interpolated_ibi, hrv
     
-    
-    #or index in beat_time:
-        #ibi_values are the differences between the times of heartbeats
-        #ibi_values = np.zeros(len(beat_time) - 1)
-        #ibi_values = np.diff(beat_time, axis=0)
-        #ibi_times = np.zeros(len(signal_heartbeat) -1)
-        #ibi_times = signal_heartbeat[ibi_values]
-        
-    #return ibi_values
-# Create function to calculate one HRV measure for each activity
-#def calculate_hrv(ibi_values):
-    #hrv = np.std(ibi_values)
-    
-    #return(hrv)
-
-#interpolate IBI at dt=0.1
-#def interpolate_data(beat_time, ibi_values, dt=0.1):
-    #beat_time = beat_time[0:-1]
-    #interpolated_time = np.arange(0,np.max(beat_time),dt)
-    #interpolated_ibi = np.interp(interpolated_time, beat_time, ibi_values)
-    
-    #return interpolated_ibi
-
 
 #%% Part 5: Get HRV Frequency Band Power
 # Create function to calculate the frequency domain magnitude of each activity’s IBI timecourse signal
@@ -126,12 +103,24 @@ def frequency_filter(ibi_values, dt = 0.1):
     high_power_index = power * high_freq_index
     high_power = high_power_index[high_power_index >0]
     
+    plt.plot(frequency, power)
+    plt.plot(low_freq, low_power, alpha = 0.7, color='y')
+    plt.fill_between(low_freq, low_power, alpha = 0.5, color='y')
+    plt.plot(high_freq, high_power, alpha = 0.7, color='g')
+    plt.fill_between(high_freq, high_power, alpha = 0.5, color='g')
+    plt.xlim(0.03, 0.4)
+    
     
     return frequency, power, low_freq, low_power, high_freq, high_power
     
-    
-    
-    
-    #return frequency, power, low_freq, low_power, high_freq, high_power
 #Create function to extract the mean power in the LF and HF frequency bands & calculate the LF/HF ratio for each
+def extract_mean_power(low_power, high_power):
+    mean_lf = np.mean(low_power)
+    mean_hf = np.mean(high_power)
+    
+    ratio = mean_lf / mean_hf
+    
+    return ratio
+    
+
 
