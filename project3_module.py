@@ -252,13 +252,14 @@ def frequency_filter(ibi_values, dt = 0.1):
     #plot frequency domain magnitude in units of power for given IBI timecourse
     plt.plot(frequency, power)
     #plot low frequency band
-    plt.plot(low_freq, low_power, alpha = 0.7, color='y')
+    plt.plot(low_freq, low_power, alpha = 0.7, color='y', label = 'LF Band')
     plt.fill_between(low_freq, low_power, alpha = 0.5, color='y') #shade below line
     # plot high frequency band
-    plt.plot(high_freq, high_power, alpha = 0.7, color='g')
+    plt.plot(high_freq, high_power, alpha = 0.7, color='g', label="HF Band")
     plt.fill_between(high_freq, high_power, alpha = 0.5, color='g') #shade below line
     #zoom in on frequency bands
     plt.xlim(0,0.4)
+    plt.legend()
     #return arrays containing frequency, power, as well as freq and power data for LF and Hf bands
     return frequency, power, low_freq, low_power, high_freq, high_power
     
